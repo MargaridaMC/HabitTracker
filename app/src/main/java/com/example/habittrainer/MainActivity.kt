@@ -1,8 +1,12 @@
 package com.example.habittrainer
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.habittrainer.db.HabitDbTable
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -47,9 +51,33 @@ class MainActivity : AppCompatActivity() {
 
         // Now using the recycler view instead of just a card view
         // increases performance
-        // - tells the recyclerView that the size of each othe cards it contains is constant
+        // - tells the recyclerView that the size of each other cards it contains is constant
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = HabitsAdapter(getSampleHabits())
+        rv.adapter = HabitsAdapter(HabitDbTable(this).readAllHabits())
+    }
+
+    // Override necessary methods needed to have a menu:
+    // - onCreateOptionsMenu
+    // - onOptionsItemSelected
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate menu layout into menu object
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    // Listener for when an options item is selected in the menu
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Check which item was clicked
+        if(item.itemId == R.id.add_habit){
+            // .class is replaced by ::class.java because we are referencing the java class
+            switchTo(CreateHabitActivity::class.java)
+        }
+        return true
+    }
+
+    private fun switchTo(c: Class<*>){ // any class
+        val intent = Intent(this, c)
+        startActivity(intent)
     }
 }

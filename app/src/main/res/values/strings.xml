@@ -2,4 +2,10 @@
     <string name="app_name">HabitTrainer</string>
     <string name="drink_water_desc">A refreshing glass of water gets you hydrated</string>
     <string name="drink_water">Drink Water</string>
+    <string name="begin_new_habit">Begin New Habit</string>
+    <string name="eat_an_apple">Eat an apple</string>
+    <string name="apple_description">An apple a day keeps the doctor away</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="save">Save Habit</string>
+    <string name="selected_image">Selected image</string>
 </resources>
