@@ -13,7 +13,8 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import com.example.habittrainer.db.HabitDbTable
-import kotlinx.android.synthetic.main.activity_create_habit.*
+import kotlinx.android.synthetic.main.activity_create_habit.tv_error
+import kotlinx.android.synthetic.main.single_card_input.*
 import java.io.IOException
 
 class CreateHabitActivity : AppCompatActivity() {
@@ -48,7 +49,7 @@ class CreateHabitActivity : AppCompatActivity() {
             && data != null && data.data != null){
             Log.d(TAG, "An image was chosen by the user.")
 
-            iv_img.visibility = View.VISIBLE
+            //iv_img.visibility = View.VISIBLE
 
             val uri = data.data
             uri?.let {
