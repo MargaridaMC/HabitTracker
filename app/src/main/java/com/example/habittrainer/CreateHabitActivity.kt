@@ -11,9 +11,11 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import com.example.habittrainer.db.HabitDbTable
-import kotlinx.android.synthetic.main.activity_create_habit.tv_error
+import kotlinx.android.synthetic.main.activity_create_habit.*
 import kotlinx.android.synthetic.main.single_card_input.*
 import java.io.IOException
 
@@ -26,6 +28,24 @@ class CreateHabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_habit)
+
+        setHabitTypeSpinner()
+    }
+
+    private fun setHabitTypeSpinner() {
+        val spinner: Spinner = findViewById(R.id.habit_type_spinner)
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.habit_type,
+            //HabitTypeEnum.values().map { it -> it.name },
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            spinner.adapter = adapter
+        }
     }
 
     fun chooseImage(view: View) {
@@ -94,9 +114,10 @@ class CreateHabitActivity : AppCompatActivity() {
 
         val title = et_title.text.toString()
         val description = et_description.text.toString()
+        val type = HabitTypeEnum.valueOf(habit_type_spinner.selectedItem.toString())
         // Here we can use the unsafe call operator !! because we already checked for nullity before
         // Since we are not calling a method on it we cannot use the safe call operator ? (which would be better)
-        val habit = Habit(title, description, imageBitmap!!)
+        val habit = Habit(title, description, imageBitmap!!, type)
         val id = HabitDbTable(this).store(habit)
         // Insert method returns -1L if something went wrong
         if(id == -1L){
@@ -113,5 +134,6 @@ class CreateHabitActivity : AppCompatActivity() {
     }
 
     private fun EditText.isBlank() = this.text.toString().isBlank()
+
 }
 

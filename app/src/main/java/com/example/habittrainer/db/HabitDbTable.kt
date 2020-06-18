@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.example.habittrainer.Habit
+import com.example.habittrainer.HabitTypeEnum
 import com.example.habittrainer.db.HabitEntry.DESCR_COL
 import com.example.habittrainer.db.HabitEntry.IMAGE_COL
 import com.example.habittrainer.db.HabitEntry.TABLE_NAME
@@ -107,7 +108,7 @@ class HabitDbTable (context: Context) {
             val title = cursor.getString(TITLE_COL)
             val description = cursor.getString(DESCR_COL)
             val bitmap = cursor.getBitmap(IMAGE_COL)
-            habits.add(Habit(title, description, bitmap))
+            habits.add(Habit(title, description, bitmap, HabitTypeEnum.BOOLEAN))
         }
 
         // Always close the cursor so you free the resources

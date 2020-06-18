@@ -3,7 +3,12 @@ package com.example.habittrainer
 import android.graphics.Bitmap
 
 //because this simply holds some data
-data class Habit(val title: String, val description : String, val image : Bitmap)
+data class Habit(val title: String, val description : String, val image : Bitmap, val habitIsBoolean : HabitTypeEnum){
+
+    constructor(title: String, description: String, image: Bitmap, habitType: String) :
+            this(title, description, image, HabitTypeEnum.valueOf(habitType))
+
+}
 
 /*
 fun getSampleHabits(): List<Habit>{

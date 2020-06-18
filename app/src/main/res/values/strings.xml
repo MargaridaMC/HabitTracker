@@ -8,4 +8,9 @@
     <string name="choose_image">Choose Image</string>
     <string name="save">Save Habit</string>
     <string name="selected_image">Selected image</string>
+    <string name="habit_type">Habit Type:</string>
+    <string-array name="habit_type">
+        <item>BOOLEAN</item>
+        <item>NUMERIC</item>
+    </string-array>
 </resources>

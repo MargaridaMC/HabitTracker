@@ -29,7 +29,8 @@ class HabitTrainerDb(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "${TimeEntry._ID} INTEGER PRIMARY KEY," +
             "${TimeEntry.DATE_COL} TEXT," +
             "${TimeEntry.DONE_COL} INTEGER," +
-            "${TimeEntry.HABIT_ID_FK_COL} INTEGER REFERRENCES ${HabitEntry} ON DELETE CASCADE" +
+            "${TimeEntry.HABIT_ID_FK_COL} INTEGER," +
+            "FOREIGN KEY (${TimeEntry.HABIT_ID_FK_COL}) REFERENCES ${HabitEntry.TABLE_NAME} ON DELETE CASCADE" +
             ")"
 
     // 2. Delete all the tables we have and recreate everything
