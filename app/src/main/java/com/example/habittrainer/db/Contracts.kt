@@ -17,3 +17,10 @@ object HabitEntry : BaseColumns{
     val DESCR_COL = "description"
     val IMAGE_COL = "image"
 }
+object TimeEntry : BaseColumns{
+    val TABLE_NAME = "habitTracking"
+    val _ID = "id"
+    val DATE_COL = "date"
+    val DONE_COL = "habitDone"
+    val HABIT_ID_FK_COL = "habitID_FK"
+}

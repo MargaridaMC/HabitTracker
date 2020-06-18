@@ -25,19 +25,33 @@ class HabitTrainerDb(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "${HabitEntry.IMAGE_COL} BLOB" +
             ")"
 
+    private val SQL_CREATE_TIME_ENTRIES = "CREATE TABLE ${TimeEntry.TABLE_NAME}(" +
+            "${TimeEntry._ID} INTEGER PRIMARY KEY," +
+            "${TimeEntry.DATE_COL} TEXT," +
+            "${TimeEntry.DONE_COL} INTEGER," +
+            "${TimeEntry.HABIT_ID_FK_COL} INTEGER REFERRENCES ${HabitEntry} ON DELETE CASCADE" +
+            ")"
+
     // 2. Delete all the tables we have and recreate everything
-    private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${HabitEntry.TABLE_NAME}"
+    private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${HabitEntry.TABLE_NAME};" +
+            "DROP TABLE IF EXISTS ${TimeEntry.TABLE_NAME};"
 
     // What happens when the database is first created
     override fun onCreate(db: SQLiteDatabase?) {
         // executes SQL code to create the table with all columns we need
         db?.execSQL(SQL_CREATE_ENTRIES)
+        db?.execSQL(SQL_CREATE_TIME_ENTRIES)
     }
 
     // What happens when the database version is increased
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL(SQL_DELETE_ENTRIES)
         onCreate(db)
+    }
+
+    override fun onOpen(db: SQLiteDatabase?) {
+        super.onOpen(db)
+        db?.execSQL("PRAGMA foreign_keys=ON")
     }
 
 }
