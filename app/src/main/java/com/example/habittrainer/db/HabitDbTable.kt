@@ -40,7 +40,9 @@ class HabitDbTable (private val context: Context) {
         with(values){
             put(TITLE_COL, habit.title)
             put(DESCR_COL, habit.description)
-            put(IMAGE_COL, toByteArray(habit.image))
+            if(habit.image != null){
+                put(IMAGE_COL, toByteArray(habit.image))
+            }
 
             if(habit is BooleanHabit){
                 put(HABIT_TYPE_COL, HabitTypeEnum.BOOLEAN.name)
@@ -97,15 +99,12 @@ class HabitDbTable (private val context: Context) {
             IMAGE_COL, HABIT_TYPE_COL
         )
 
-        val order = "$_ID ASC"
-
         val db = dbHelper.readableDatabase
 
         // Select all collumns in our table and order them in ascending order by ID
         // Returns a cursor = what allows you to go through the database and get all the elements you want
         // In a database it will go through each row of the database
-        val cursor = db.doQuery(TABLE_NAME, columns, orderBy = order)
-        db.close()
+        val cursor = db.doQuery(TABLE_NAME, columns)
         return parseHabitsFrom(cursor)
     }
 

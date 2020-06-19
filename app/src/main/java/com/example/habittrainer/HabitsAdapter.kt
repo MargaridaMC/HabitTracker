@@ -1,5 +1,6 @@
 package com.example.habittrainer
 
+import android.graphics.BitmapFactory
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +24,12 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
         val habit = habits[idx]
         holder.card.tv_title.text = habit.title
         holder.card.tv_description.text = habit.description
-        holder.card.iv_icon.setImageBitmap(habit.image)
+        if(habit.image == null){
+            holder.card.iv_icon.setImageResource(android.R.drawable.ic_menu_camera)
+        } else {
+            holder.card.iv_icon.setImageBitmap(habit.image)
+        }
+
         if(habit is NumericHabit){
             holder.card.count.setText(habit.numberTimesDoneToday.toString())
 

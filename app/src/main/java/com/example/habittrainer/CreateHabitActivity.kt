@@ -105,12 +105,12 @@ class CreateHabitActivity : AppCompatActivity() {
             Log.d(TAG, "No habit stored: title or description missing.")
             displayErrorMessage("Your habit needs an engaging title and description.")
             return
-        } else if(imageBitmap == null){
+        } /*else if(imageBitmap == null){
             Log.d(TAG, "No habit stored: image is missing.")
             displayErrorMessage("Add a motivating picture to your habit.")
             return
         }
-
+*/
         // Store the habit to the database
         tv_error.visibility = View.INVISIBLE
 
@@ -120,9 +120,9 @@ class CreateHabitActivity : AppCompatActivity() {
         // Here we can use the unsafe call operator !! because we already checked for nullity before
         // Since we are not calling a method on it we cannot use the safe call operator ? (which would be better)
         val habit = if(type == HabitTypeEnum.BOOLEAN){
-            BooleanHabit(title, description, imageBitmap!!, false, -1L)
+            BooleanHabit(title, description, imageBitmap, false, -1L)
         } else {
-            NumericHabit(title, description, imageBitmap!!, 0, -1L)
+            NumericHabit(title, description, imageBitmap, 0, -1L)
         }
 
         val id = HabitDbTable(this).store(habit)

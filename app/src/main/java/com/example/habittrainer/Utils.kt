@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.database.getBlobOrNull
 import androidx.fragment.app.Fragment
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -48,10 +49,15 @@ fun Cursor.getInt(columnName : String) = getInt(getColumnIndex(columnName))
 
 fun Cursor.getLong(columnName : String) = getLong(getColumnIndex(columnName))
 
-fun Cursor.getBitmap(columnName: String) : Bitmap {
+fun Cursor.getBitmap(columnName: String) : Bitmap? {
 
-    val byteArray = getBlob(getColumnIndex(columnName))
-    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    return try {
+        val byteArray = getBlob(getColumnIndex(columnName))
+        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    } catch (e : Exception){
+        null
+    }
+
 
 }
 
