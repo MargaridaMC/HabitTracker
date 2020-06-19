@@ -1,6 +1,5 @@
 package com.example.habittrainer
 
-import android.graphics.BitmapFactory
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -86,11 +85,20 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
         }
     }
 
+    fun removeAt(position: Int) {
+        //habits.drop(position)
+        notifyItemRemoved(position)
+        OnHabitChangedListener.deleteHabit(habits[position])
+        // Remove from database
+    }
+
     // in Java you would call super(view) in the constructor
     class HabitViewHolder(val card : View) : RecyclerView.ViewHolder(card)
+
 
 }
 
 interface OnHabitChangedListener {
     fun updateHabit(habit : Habit)
+    fun deleteHabit(habit : Habit)
 }

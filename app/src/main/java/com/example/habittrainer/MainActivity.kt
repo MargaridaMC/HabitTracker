@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.habittrainer.db.HabitDbTable
 import com.example.habittrainer.db.TimeDbTable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -99,6 +101,16 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = HabitsAdapter(allHabits, this)
+
+        val swipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = rv.adapter as HabitsAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+            }
+
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(rv)
     }
 
     // Override necessary methods needed to have a menu:
@@ -129,5 +141,11 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         TimeDbTable(this).updateTimeEntry(habit)
         hideKeyboard()
         rv.requestFocus()
+    }
+
+    override fun deleteHabit(habit: Habit) {
+        HabitDbTable(this).deleteHabit(habit)
+        finish();
+        startActivity(intent);
     }
 }

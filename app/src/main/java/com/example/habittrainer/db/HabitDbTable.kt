@@ -139,4 +139,10 @@ class HabitDbTable (private val context: Context) {
         return stream.toByteArray()
     }
 
+    fun deleteHabit(habit: Habit) {
+        val db = dbHelper.writableDatabase
+        db.delete(TABLE_NAME, "$_ID = ?", arrayOf("${habit._id}"))
+        db.close()
+    }
+
 }
