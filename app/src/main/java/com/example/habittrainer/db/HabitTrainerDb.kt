@@ -22,7 +22,9 @@ class HabitTrainerDb(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "${HabitEntry._ID} INTEGER PRIMARY KEY," + // Unique ID for each element
             "${HabitEntry.TITLE_COL} TEXT," +
             "${HabitEntry.DESCR_COL} TEXT," +
-            "${HabitEntry.IMAGE_COL} BLOB" +
+            "${HabitEntry.IMAGE_COL} BLOB," +
+            "${HabitEntry.HABIT_TYPE_COL} TEXT," +
+            "${HabitEntry.HABIT_COUNT_COL} INTEGER" +
             ")"
 
     private val SQL_CREATE_TIME_ENTRIES = "CREATE TABLE ${TimeEntry.TABLE_NAME}(" +

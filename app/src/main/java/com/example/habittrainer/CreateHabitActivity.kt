@@ -117,7 +117,12 @@ class CreateHabitActivity : AppCompatActivity() {
         val type = HabitTypeEnum.valueOf(habit_type_spinner.selectedItem.toString())
         // Here we can use the unsafe call operator !! because we already checked for nullity before
         // Since we are not calling a method on it we cannot use the safe call operator ? (which would be better)
-        val habit = Habit(title, description, imageBitmap!!, type)
+        val habit = if(type == HabitTypeEnum.BOOLEAN){
+            BooleanHabit(title, description, imageBitmap!!, false)
+        } else {
+            NumericHabit(title, description, imageBitmap!!, 0)
+        }
+
         val id = HabitDbTable(this).store(habit)
         // Insert method returns -1L if something went wrong
         if(id == -1L){

@@ -7,9 +7,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.example.habittrainer.BooleanHabit
 import com.example.habittrainer.Habit
 import com.example.habittrainer.HabitTypeEnum
+import com.example.habittrainer.NumericHabit
 import com.example.habittrainer.db.HabitEntry.DESCR_COL
+import com.example.habittrainer.db.HabitEntry.HABIT_COUNT_COL
+import com.example.habittrainer.db.HabitEntry.HABIT_TYPE_COL
 import com.example.habittrainer.db.HabitEntry.IMAGE_COL
 import com.example.habittrainer.db.HabitEntry.TABLE_NAME
 import com.example.habittrainer.db.HabitEntry.TITLE_COL
@@ -42,6 +46,16 @@ class HabitDbTable (context: Context) {
             put(TITLE_COL, habit.title)
             put(DESCR_COL, habit.description)
             put(IMAGE_COL, toByteArray(habit.image))
+
+            if(habit is BooleanHabit){
+                put(HABIT_TYPE_COL, HabitTypeEnum.BOOLEAN.name)
+                val count = habit.doneToday.toInt()
+                put(HABIT_COUNT_COL, count)
+            } else if (habit is NumericHabit){
+                put(HABIT_TYPE_COL, HabitTypeEnum.NUMERIC.name)
+                put(HABIT_COUNT_COL, habit.numberTimesDoneToday)
+            }
+
         }
 
         // arguments:
@@ -85,7 +99,7 @@ class HabitDbTable (context: Context) {
 
         val columns = arrayOf(
             _ID, TITLE_COL, DESCR_COL,
-            IMAGE_COL
+            IMAGE_COL, HABIT_TYPE_COL, HABIT_COUNT_COL
         )
 
         val order = "$_ID ASC"
@@ -108,7 +122,14 @@ class HabitDbTable (context: Context) {
             val title = cursor.getString(TITLE_COL)
             val description = cursor.getString(DESCR_COL)
             val bitmap = cursor.getBitmap(IMAGE_COL)
-            habits.add(Habit(title, description, bitmap, HabitTypeEnum.BOOLEAN))
+            val type = cursor.getString(HABIT_TYPE_COL)
+            val count = cursor.getInt(HABIT_COUNT_COL)
+            if(HabitTypeEnum.valueOf(type) == HabitTypeEnum.BOOLEAN){
+                habits.add(BooleanHabit(title, description, bitmap, count == 1))
+            } else {
+                habits.add(NumericHabit(title, description, bitmap, count))
+            }
+            //habits.add(Habit(title, description, bitmap, HabitTypeEnum.BOOLEAN))
         }
 
         // Always close the cursor so you free the resources
@@ -157,9 +178,13 @@ private fun SQLiteDatabase.doQuery(tableName: String, columns : Array<String>, s
 
 private fun Cursor.getString(columnName : String) = getString(getColumnIndex(columnName))
 
+private fun Cursor.getInt(columnName : String) = getInt(getColumnIndex(columnName))
+
 private fun Cursor.getBitmap(columnName: String) : Bitmap {
 
     val byteArray = getBlob(getColumnIndex(columnName))
     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 
 }
+
+fun Boolean.toInt() = if (this) 1 else 0
