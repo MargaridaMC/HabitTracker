@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="8dp"
     android:elevation="24dp"
+    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -30,6 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/padding"
             android:layout_marginEnd="@dimen/padding"
+            android:focusable="true"
+            android:focusableInTouchMode ="true"
             app:layout_constraintStart_toEndOf="@id/iv_icon"
             app:layout_constraintTop_toTopOf="@id/iv_icon"
             app:layout_constraintEnd_toStartOf="@id/count"/>
@@ -48,6 +51,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
+            android:maxLines="1"
+            android:inputType="numberDecimal"
+            android:imeOptions="actionDone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

@@ -15,8 +15,10 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.example.habittrainer.db.HabitDbTable
+import com.example.habittrainer.db.TimeDbTable
 import kotlinx.android.synthetic.main.activity_create_habit.*
 import kotlinx.android.synthetic.main.single_card_input.*
+import org.joda.time.DateTime
 import java.io.IOException
 
 class CreateHabitActivity : AppCompatActivity() {
@@ -118,12 +120,16 @@ class CreateHabitActivity : AppCompatActivity() {
         // Here we can use the unsafe call operator !! because we already checked for nullity before
         // Since we are not calling a method on it we cannot use the safe call operator ? (which would be better)
         val habit = if(type == HabitTypeEnum.BOOLEAN){
-            BooleanHabit(title, description, imageBitmap!!, false)
+            BooleanHabit(title, description, imageBitmap!!, false, -1L)
         } else {
-            NumericHabit(title, description, imageBitmap!!, 0)
+            NumericHabit(title, description, imageBitmap!!, 0, -1L)
         }
 
         val id = HabitDbTable(this).store(habit)
+
+        // Create a time entry for today for this habit
+        TimeDbTable(this).addTimeEntriesForDate(DateTime(), listOf(id))
+
         // Insert method returns -1L if something went wrong
         if(id == -1L){
             displayErrorMessage("Habit could not be stored... Let's not make this a habit.")

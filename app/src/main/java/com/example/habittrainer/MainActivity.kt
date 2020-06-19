@@ -1,15 +1,20 @@
 package com.example.habittrainer
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.habittrainer.db.HabitDbTable
+import com.example.habittrainer.db.TimeDbTable
 import kotlinx.android.synthetic.main.activity_main.*
+import org.joda.time.DateTime
+import org.joda.time.Interval
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(), OnHabitChangedListener{
 
     // Get reference to textView -- the "Java" way
     // -- we have a nullable type and a var so that it can be initialized here and assigned later
@@ -28,6 +33,45 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val allHabits = HabitDbTable(this).readAllHabits()
+
+        // Check the last time the app was opened so that we can fill in the days with no information
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        val lastUsedDateString = sharedPref.getString(getString(R.string.last_day_used), "")
+
+        val today = DateTime.now()
+        val allHabitIDs : List<Long> = allHabits.map { it._id }
+
+        if(lastUsedDateString == ""){
+            // App is being used for the first time
+            // Fill in time entries for today only
+            TimeDbTable(this).addTimeEntriesForDate(today, allHabitIDs)
+
+            // Write today as the last day of usage in shared preferences
+            with (sharedPref.edit()) {
+                putString(getString(R.string.last_day_used), today.toFormattedString())
+                apply()
+            }
+
+        } else if(lastUsedDateString != today.toFormattedString()) {
+
+            // Fill in all time entries between this date and today
+            val lastUsedDate = lastUsedDateString?.toDate()
+            if(lastUsedDate != null) {
+                val interval = Interval(lastUsedDate, today)
+                TimeDbTable(this).addTimeEntriesForDates(interval, allHabitIDs)
+            }
+
+            // Write today as the last day of usage in shared preferences
+            with (sharedPref.edit()) {
+                putString(getString(R.string.last_day_used), today.toFormattedString())
+                apply()
+            }
+
+        }
+
+
 
         // Get reference to textView -- the "Java" way
         // We need to use the !! or ? operator to make sure that the object tvDescription is not null
@@ -54,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         // - tells the recyclerView that the size of each other cards it contains is constant
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = HabitsAdapter(HabitDbTable(this).readAllHabits())
+        rv.adapter = HabitsAdapter(allHabits, this)
     }
 
     // Override necessary methods needed to have a menu:
@@ -79,5 +123,11 @@ class MainActivity : AppCompatActivity() {
     private fun switchTo(c: Class<*>){ // any class
         val intent = Intent(this, c)
         startActivity(intent)
+    }
+
+    override fun updateHabit(habit: Habit) {
+        TimeDbTable(this).updateTimeEntry(habit)
+        hideKeyboard()
+        rv.requestFocus()
     }
 }

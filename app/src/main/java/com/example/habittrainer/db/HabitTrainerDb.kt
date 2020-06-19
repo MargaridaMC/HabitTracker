@@ -23,8 +23,7 @@ class HabitTrainerDb(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "${HabitEntry.TITLE_COL} TEXT," +
             "${HabitEntry.DESCR_COL} TEXT," +
             "${HabitEntry.IMAGE_COL} BLOB," +
-            "${HabitEntry.HABIT_TYPE_COL} TEXT," +
-            "${HabitEntry.HABIT_COUNT_COL} INTEGER" +
+            "${HabitEntry.HABIT_TYPE_COL} TEXT" +
             ")"
 
     private val SQL_CREATE_TIME_ENTRIES = "CREATE TABLE ${TimeEntry.TABLE_NAME}(" +
@@ -32,7 +31,8 @@ class HabitTrainerDb(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "${TimeEntry.DATE_COL} TEXT," +
             "${TimeEntry.DONE_COL} INTEGER," +
             "${TimeEntry.HABIT_ID_FK_COL} INTEGER," +
-            "FOREIGN KEY (${TimeEntry.HABIT_ID_FK_COL}) REFERENCES ${HabitEntry.TABLE_NAME} ON DELETE CASCADE" +
+            "FOREIGN KEY (${TimeEntry.HABIT_ID_FK_COL}) REFERENCES ${HabitEntry.TABLE_NAME} ON DELETE CASCADE," +
+            "UNIQUE(${TimeEntry.HABIT_ID_FK_COL}, ${TimeEntry.DATE_COL})" +
             ")"
 
     // 2. Delete all the tables we have and recreate everything

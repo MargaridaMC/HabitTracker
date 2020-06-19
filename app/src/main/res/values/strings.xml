@@ -13,4 +13,5 @@
         <item>BOOLEAN</item>
         <item>NUMERIC</item>
     </string-array>
+    <string name="last_day_used">dayLastUse</string>
 </resources>

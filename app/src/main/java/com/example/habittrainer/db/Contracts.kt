@@ -17,7 +17,6 @@ object HabitEntry : BaseColumns{
     val DESCR_COL = "description"
     val IMAGE_COL = "image"
     val HABIT_TYPE_COL = "habitType"
-    val HABIT_COUNT_COL = "habitCount"
 }
 object TimeEntry : BaseColumns{
     val TABLE_NAME = "habitTracking"

@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.habittrainer"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -35,5 +35,6 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
+    implementation 'joda-time:joda-time:2.10.2'
+    implementation 'com.github.debop:koda-time:2.0.0'
 }
