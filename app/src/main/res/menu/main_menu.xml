@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/see_progress"
+        android:icon="@drawable/chart"
+        android:title="@string/see_progress"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/add_habit"
+        android:icon="@drawable/plus_sign"
         android:title="@string/begin_new_habit"
         app:showAsAction="ifRoom"/>
+
+
 </menu>

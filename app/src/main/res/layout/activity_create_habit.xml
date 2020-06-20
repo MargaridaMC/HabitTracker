@@ -12,6 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding"
         android:orientation="horizontal">
 
         <TextView
@@ -31,6 +32,8 @@
         android:id="@+id/btn_save"
         android:text="@string/save"
         android:onClick="saveHabit"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_marginTop="@dimen/padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -38,6 +41,7 @@
         android:id="@+id/tv_error"
         android:visibility="invisible"
         android:textColor="@color/colorError"
+        android:layout_marginTop="@dimen/padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -127,6 +128,10 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         if(item.itemId == R.id.add_habit){
             // .class is replaced by ::class.java because we are referencing the java class
             switchTo(CreateHabitActivity::class.java)
+        } else if(item.itemId == R.id.see_progress){
+            val toast = Toast.makeText(this, "Feature not yet implemented.",
+                Toast.LENGTH_LONG)
+            toast.show()
         }
         return true
     }

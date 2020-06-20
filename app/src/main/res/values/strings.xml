@@ -14,4 +14,5 @@
         <item>NUMERIC</item>
     </string-array>
     <string name="last_day_used">dayLastUse</string>
+    <string name="see_progress">See Progress</string>
 </resources>
