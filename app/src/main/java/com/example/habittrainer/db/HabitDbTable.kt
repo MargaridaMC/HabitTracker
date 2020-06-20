@@ -28,13 +28,13 @@ class HabitDbTable (private val context: Context) {
     fun store(habit: Habit) : Long {
         val db = dbHelper.writableDatabase
 
-        val values = ContentValues()
+        /*val values = ContentValues()
         // values.put(col_name, value)
-        /*values.put(HabitEntry.TITLE_COL, habit.title)
+        *//*values.put(HabitEntry.TITLE_COL, habit.title)
         values.put(HabitEntry.DESCR_COL, habit.description)
         // Use toByteArray because we don't want to store a Bitmap
         values.put(HabitEntry.IMAGE_COL, toByteArray(habit.image))
-        */
+        *//*
 
         // Better
         with(values){
@@ -69,7 +69,7 @@ class HabitDbTable (private val context: Context) {
         // 3. setTransactionSuccessful
         // 4. end transaction
         // 5. CLOSE THE DATABASE (IMPORTANT)
-        /*db.beginTransaction()
+        *//*db.beginTransaction()
         val id = try {
             val returnValue = db.insert(HabitEntry.TABLE_NAME, null, values)
             db.setTransactionSuccessful()
@@ -79,6 +79,8 @@ class HabitDbTable (private val context: Context) {
         }
 
         db.close()*/
+
+        val values = ContentValues().put(habit)
 
         // However this is very lengthy code and will need to be repeated whenever you want to interact with the database
         // The only code that changes is the actual interaction
@@ -90,6 +92,31 @@ class HabitDbTable (private val context: Context) {
         Log.d(TAG, "Stored new habit to the DB $habit")
 
         return id
+    }
+
+    fun update(habit: Habit) {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().put(habit)
+        db.update(TABLE_NAME, values, "$_ID = ?", arrayOf("${habit._id}"))
+        db.close()
+    }//152??
+
+    fun ContentValues.put(habit: Habit): ContentValues {
+
+
+        put(TITLE_COL, habit.title)
+        put(DESCR_COL, habit.description)
+        if(habit.image != null){
+            put(IMAGE_COL, toByteArray(habit.image))
+        }
+
+        if(habit is BooleanHabit){
+            put(HABIT_TYPE_COL, HabitTypeEnum.BOOLEAN.name)
+        } else if (habit is NumericHabit){
+            put(HABIT_TYPE_COL, HabitTypeEnum.NUMERIC.name)
+        }
+
+        return this
     }
 
     fun readAllHabits() : List<Habit>{
@@ -113,17 +140,7 @@ class HabitDbTable (private val context: Context) {
         // Return false once there are no more entries for the cursor to read from
 
         while (cursor.moveToNext()) {
-            val id = cursor.getLong(_ID)
-            val title = cursor.getString(TITLE_COL)
-            val description = cursor.getString(DESCR_COL)
-            val bitmap = cursor.getBitmap(IMAGE_COL)
-            val type = cursor.getString(HABIT_TYPE_COL)
-            val count = TimeDbTable(context).getLastEntryFromHabitIDDate(id, DateTime.now())
-            if(HabitTypeEnum.valueOf(type) == HabitTypeEnum.BOOLEAN){
-                habits.add(BooleanHabit(title, description, bitmap, count == 1, id))
-            } else {
-                habits.add(NumericHabit(title, description, bitmap, count, id))
-            }
+            habits.add(cursor.getHabit(context))
         }
 
         // Always close the cursor so you free the resources
@@ -145,4 +162,18 @@ class HabitDbTable (private val context: Context) {
         db.close()
     }
 
+    fun getHabitByID(habitID: Long): Habit {
+        val db = dbHelper.readableDatabase
+        val cursor = db.doQuery(HabitEntry.TABLE_NAME, HabitEntry.getAllColumns(),
+            "${HabitEntry._ID} = ?", arrayOf("$habitID"))
+        cursor.moveToFirst()
+        val habit = cursor.getHabit(context)
+        db.close()
+        return habit
+    }
+
+
+
 }
+
+

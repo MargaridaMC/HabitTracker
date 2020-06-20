@@ -1,14 +1,15 @@
 package com.example.habittrainer
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.habittrainer.db.HabitDbTable
 import com.example.habittrainer.db.TimeDbTable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,6 +18,8 @@ import org.joda.time.Interval
 
 
 class MainActivity : AppCompatActivity(), OnHabitChangedListener{
+
+    public val HABIT_ID_EXTRA = "habitID"
 
     // Get reference to textView -- the "Java" way
     // -- we have a nullable type and a var so that it can be initialized here and assigned later
@@ -102,14 +105,10 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = HabitsAdapter(allHabits, this)
 
-        val swipeHandler = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = rv.adapter as HabitsAdapter
-                adapter.removeAt(viewHolder.adapterPosition)
-            }
 
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        val itemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(this,
+            rv.adapter as HabitsAdapter
+        ))
         itemTouchHelper.attachToRecyclerView(rv)
     }
 
@@ -137,6 +136,12 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         startActivity(intent)
     }
 
+    override fun editHabit(habit: Habit) {
+        val intent = Intent(this, CreateHabitActivity::class.java)
+        intent.putExtra(HABIT_ID_EXTRA, habit._id)
+        startActivity(intent)
+    }
+
     override fun updateHabit(habit: Habit) {
         TimeDbTable(this).updateTimeEntry(habit)
         hideKeyboard()
@@ -144,8 +149,19 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
     }
 
     override fun deleteHabit(habit: Habit) {
-        HabitDbTable(this).deleteHabit(habit)
-        finish();
-        startActivity(intent);
+        confirmHabitDelete(habit)
+    }
+
+    private fun confirmHabitDelete(habit: Habit){
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setMessage("Are you sure you want to delete this habit?")
+        alertDialogBuilder.setPositiveButton("Yes!") { _: DialogInterface, _: Int ->
+            HabitDbTable(this).deleteHabit(habit)
+            finish()
+            startActivity(intent)
+        }
+        alertDialogBuilder.setNegativeButton("No") { _: DialogInterface, _: Int -> return@setNegativeButton}
+
+        alertDialogBuilder.show()
     }
 }

@@ -13,10 +13,10 @@ import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Spinner
 import com.example.habittrainer.db.HabitDbTable
 import com.example.habittrainer.db.TimeDbTable
 import kotlinx.android.synthetic.main.activity_create_habit.*
+import kotlinx.android.synthetic.main.single_card_boolean_habit.*
 import kotlinx.android.synthetic.main.single_card_input.*
 import org.joda.time.DateTime
 import java.io.IOException
@@ -26,16 +26,33 @@ class CreateHabitActivity : AppCompatActivity() {
     private val TAG = CreateHabitActivity::class.simpleName
     private val CHOOSE_IMAGE_REQUEST = 1
     private var imageBitmap: Bitmap? = null
+    private var habitID : Long = -1L;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_habit)
 
         setHabitTypeSpinner()
+
+        // Check if we are editing a habit by checking if we have an id in the extra
+        habitID = intent.getLongExtra(HABIT_ID_EXTRA, -1L)
+        if(habitID != -1L){
+            // We are trying to edit a habit
+            val habit = HabitDbTable(this).getHabitByID(habitID)
+            et_title.setText(habit.title)
+            et_description.setText(habit.description)
+            if(habit is NumericHabit){
+                habit_type_spinner.setSelection(1)
+            } else {
+                habit_type_spinner.setSelection(0)
+            }
+            if(habit.image != null){
+                iv_img.setImageBitmap(habit.image)
+            }
+        }
     }
 
     private fun setHabitTypeSpinner() {
-        val spinner: Spinner = findViewById(R.id.habit_type_spinner)
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter.createFromResource(
             this,
@@ -46,7 +63,7 @@ class CreateHabitActivity : AppCompatActivity() {
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Apply the adapter to the spinner
-            spinner.adapter = adapter
+            habit_type_spinner.adapter = adapter
         }
     }
 
@@ -120,18 +137,23 @@ class CreateHabitActivity : AppCompatActivity() {
         // Here we can use the unsafe call operator !! because we already checked for nullity before
         // Since we are not calling a method on it we cannot use the safe call operator ? (which would be better)
         val habit = if(type == HabitTypeEnum.BOOLEAN){
-            BooleanHabit(title, description, imageBitmap, false, -1L)
+            BooleanHabit(title, description, imageBitmap, false, habitID)
         } else {
-            NumericHabit(title, description, imageBitmap, 0, -1L)
+            NumericHabit(title, description, imageBitmap, 0, habitID)
         }
 
-        val id = HabitDbTable(this).store(habit)
+        if(habitID == -1L) {
+            habitID = HabitDbTable(this).store(habit)
 
-        // Create a time entry for today for this habit
-        TimeDbTable(this).addTimeEntriesForDate(DateTime(), listOf(id))
+            // Create a time entry for today for this habit
+            TimeDbTable(this).addTimeEntriesForDate(DateTime(), listOf(habitID))
+        } else {
+            // We are editing a habit
+            HabitDbTable(this).update(habit)
+        }
 
         // Insert method returns -1L if something went wrong
-        if(id == -1L){
+        if(habitID == -1L){
             displayErrorMessage("Habit could not be stored... Let's not make this a habit.")
         } else {
             val intent = Intent(this, MainActivity::class.java)

@@ -92,6 +92,11 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
         // Remove from database
     }
 
+    fun editHabit(position: Int) {
+        notifyItemRemoved(position)
+        OnHabitChangedListener.editHabit(habits[position])
+    }
+
     // in Java you would call super(view) in the constructor
     class HabitViewHolder(val card : View) : RecyclerView.ViewHolder(card)
 
@@ -99,6 +104,7 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
 }
 
 interface OnHabitChangedListener {
+    fun editHabit(habit : Habit)
     fun updateHabit(habit : Habit)
     fun deleteHabit(habit : Habit)
 }

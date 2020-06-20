@@ -17,6 +17,10 @@ object HabitEntry : BaseColumns{
     val DESCR_COL = "description"
     val IMAGE_COL = "image"
     val HABIT_TYPE_COL = "habitType"
+    fun getAllColumns(): Array<String> {
+        return arrayOf(_ID, TITLE_COL, DESCR_COL,
+            IMAGE_COL, HABIT_TYPE_COL)
+    }
 }
 object TimeEntry : BaseColumns{
     val TABLE_NAME = "habitTracking"

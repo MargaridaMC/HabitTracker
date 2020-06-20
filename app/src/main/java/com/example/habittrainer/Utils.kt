@@ -8,10 +8,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.database.getBlobOrNull
-import androidx.fragment.app.Fragment
+import com.example.habittrainer.db.HabitEntry
+import com.example.habittrainer.db.TimeDbTable
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+
+val HABIT_ID_EXTRA = "habitID"
 
 // Function that takes in the transaction we want to do with the database
 // and does all the extra necessary steps for it
@@ -57,8 +59,20 @@ fun Cursor.getBitmap(columnName: String) : Bitmap? {
     } catch (e : Exception){
         null
     }
+}
 
-
+fun Cursor.getHabit(context: Context) : Habit{
+    val id = getLong(HabitEntry._ID)
+    val title = getString(HabitEntry.TITLE_COL)
+    val description = getString(HabitEntry.DESCR_COL)
+    val bitmap = getBitmap(HabitEntry.IMAGE_COL)
+    val type = getString(HabitEntry.HABIT_TYPE_COL)
+    val count = TimeDbTable(context).getLastEntryFromHabitIDDate(id, DateTime.now())
+    return if(HabitTypeEnum.valueOf(type) == HabitTypeEnum.BOOLEAN){
+        BooleanHabit(title, description, bitmap, count == 1, id)
+    } else {
+        NumericHabit(title, description, bitmap, count, id)
+    }
 }
 
 fun Boolean.toInt() = if (this) 1 else 0
