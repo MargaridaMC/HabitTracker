@@ -50,7 +50,7 @@ class SimpleItemTouchHelperCallback(context: Context, val adapter : HabitsAdapte
         if (direction == ItemTouchHelper.RIGHT) {
             adapter.editHabit(position)
         } else if (direction == ItemTouchHelper.LEFT) {
-            adapter.removeAt(position)
+            adapter.removeHabit(position)
         }
     }
 

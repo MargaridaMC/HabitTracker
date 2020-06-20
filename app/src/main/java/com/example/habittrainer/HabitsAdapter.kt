@@ -1,5 +1,6 @@
 package com.example.habittrainer
 
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,8 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
     RecyclerView.Adapter<HabitsAdapter.HabitViewHolder>() {
 
     private val TYPE_NUMERIC = 1
-    private val TYPE_BOOLEAN = 2
+    private val TYPE_BOOLEAN = 0
+    private val TAG = HabitsAdapter::class.simpleName
 
     // Defines the contents of the card
     override fun onBindViewHolder(holder: HabitViewHolder, idx: Int) {
@@ -32,7 +34,8 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
         if(habit is NumericHabit){
             holder.card.count.setText(habit.numberTimesDoneToday.toString())
 
-            holder.card.count.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            holder.card.count.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+                Log.d(TAG, "Key code: $keyCode Event: $event")
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
                     //Perform Code
                     val c = Integer.parseInt(holder.card.count.text.toString())
@@ -85,7 +88,7 @@ class HabitsAdapter(private val habits: List<Habit>, private val OnHabitChangedL
         }
     }
 
-    fun removeAt(position: Int) {
+    fun removeHabit(position: Int) {
         //habits.drop(position)
         notifyItemRemoved(position)
         OnHabitChangedListener.deleteHabit(habits[position])

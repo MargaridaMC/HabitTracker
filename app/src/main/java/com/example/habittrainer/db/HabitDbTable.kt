@@ -99,7 +99,7 @@ class HabitDbTable (private val context: Context) {
         val values = ContentValues().put(habit)
         db.update(TABLE_NAME, values, "$_ID = ?", arrayOf("${habit._id}"))
         db.close()
-    }//152??
+    }
 
     fun ContentValues.put(habit: Habit): ContentValues {
 
