@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,7 +19,7 @@ import org.joda.time.Interval
 
 class MainActivity : AppCompatActivity(), OnHabitChangedListener{
 
-    public val HABIT_ID_EXTRA = "habitID"
+    private val HABIT_ID_EXTRA = "habitID"
 
     // Get reference to textView -- the "Java" way
     // -- we have a nullable type and a var so that it can be initialized here and assigned later
@@ -46,7 +45,7 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
         val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
         val lastUsedDateString = sharedPref.getString(getString(R.string.last_day_used), "")
 
-        val today = DateTime.now()
+        val today = DateTime.now().minusHours(2)
         val allHabitIDs : List<Long> = allHabits.map { it._id }
 
         if(lastUsedDateString == ""){
@@ -129,9 +128,10 @@ class MainActivity : AppCompatActivity(), OnHabitChangedListener{
             // .class is replaced by ::class.java because we are referencing the java class
             switchTo(CreateHabitActivity::class.java)
         } else if(item.itemId == R.id.see_progress){
-            val toast = Toast.makeText(this, "Feature not yet implemented.",
+            /*val toast = Toast.makeText(this, "Feature not yet implemented.",
                 Toast.LENGTH_LONG)
-            toast.show()
+            toast.show()*/
+            switchTo(ProgressActivity::class.java)
         }
         return true
     }

@@ -67,4 +67,26 @@ class TimeDbTable (context: Context) {
 
         db.close()
     }
+
+    fun getAllTimeEntriesForHabit(habitID : Long) : Map<DateTime, Int>{
+
+        val timeEntries = mutableMapOf<DateTime, Int>()
+
+        val columns = arrayOf(TimeEntry.DATE_COL, TimeEntry.DONE_COL)
+        val db = dbHelper.readableDatabase
+
+        val cursor = db.doQuery(TimeEntry.TABLE_NAME, columns,
+            "${TimeEntry.HABIT_ID_FK_COL} = ?", arrayOf("$habitID"))
+
+        while(cursor.moveToNext()){
+            val date = cursor.getString(TimeEntry.DATE_COL).toDate()
+            val timesDone = cursor.getInt(TimeEntry.DONE_COL)
+            timeEntries[date] = timesDone
+        }
+
+        cursor.close()
+        db.close()
+
+        return timeEntries
+    }
 }
